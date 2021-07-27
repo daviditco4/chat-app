@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "625793743938",
+    "project_id": "chat-app-edf27",
+    "storage_bucket": "chat-app-edf27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:625793743938:android:1db147fdf6eddb99f041db",
+        "android_client_info": {
+          "package_name": "com.daviditcovici.chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "625793743938-nuj9jrditimg55gdvl9vnailfbi36di7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.daviditcovici.chat_app",
+            "certificate_hash": "405e3ee1078f3fee3273a75092ef2a1c0a020eba"
+          }
+        },
+        {
+          "client_id": "625793743938-1edf2gdm41sgmmoh4g4edu700chr2r8a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAioAuQqhcmKYUGtgbEJ2swImFLM97wS9A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "625793743938-1edf2gdm41sgmmoh4g4edu700chr2r8a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
