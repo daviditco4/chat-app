@@ -5,24 +5,35 @@ import 'package:flutter/material.dart';
 class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const messagesCollectionPath = 'chats/cLG4gutEgm0MutC2aDyu/messages';
-
-    Firestore.instance.collection(messagesCollectionPath).snapshots().listen(
-      (event) {
-        event.documents.forEach((document) => print(document.data['text']));
-      },
-    );
+    const msgsCollectionPath = 'chats/cLG4gutEgm0MutC2aDyu/messages';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Chat')),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(12.0),
-        reverse: true,
-        itemCount: 3,
-        itemBuilder: (_, index) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 6.0),
-            child: Text('Message ${index + 1}'),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance.collection(msgsCollectionPath).snapshots(),
+        builder: (_, snapshot) {
+          final List<DocumentSnapshot>? documents;
+
+          return snapshot.connectionState == ConnectionState.waiting
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  padding: const EdgeInsets.all(12.0),
+                  reverse: true,
+                  itemCount: (documents = snapshot.data!.documents).length,
+                  itemBuilder: (_, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 6.0),
+                      child: Text(documents![index]['text']),
+                    );
+                  },
+                );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.send),
+        onPressed: () {
+          Firestore.instance.collection(msgsCollectionPath).add(
+            {'text': DateTime.now().toString()},
           );
         },
       ),
