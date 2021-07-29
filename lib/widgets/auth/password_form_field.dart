@@ -10,8 +10,6 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
 
   @override
   Widget build(BuildContext context) {
-    final errClr = Theme.of(context).errorColor;
-
     return TextFormField(
       obscureText: _obscureText,
       keyboardType: TextInputType.visiblePassword,
@@ -19,9 +17,6 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
       onEditingComplete: () {},
       decoration: InputDecoration(
         icon: const Icon(Icons.password),
-        border: const OutlineInputBorder(),
-        errorBorder: OutlineInputBorder(borderSide: BorderSide(color: errClr)),
-        filled: true,
         labelText: 'Password',
         suffixIcon: InkWell(
           onTap: () => setState(() => _obscureText = !_obscureText),

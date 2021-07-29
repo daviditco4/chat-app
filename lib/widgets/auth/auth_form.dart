@@ -11,9 +11,6 @@ class _AuthFormState extends State<AuthForm> {
   @override
   Widget build(BuildContext context) {
     final thm = Theme.of(context);
-    final textInputErrorBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: thm.errorColor),
-    );
     const verticalSpace = SizedBox(height: 12.0);
 
     return Form(
@@ -21,30 +18,34 @@ class _AuthFormState extends State<AuthForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                icon: const Icon(Icons.email),
-                border: const OutlineInputBorder(),
-                errorBorder: textInputErrorBorder,
-                filled: true,
-                labelText: 'Email',
+            Theme(
+              data: thm.copyWith(
+                colorScheme: thm.colorScheme.copyWith(primary: thm.accentColor),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      icon: const Icon(Icons.email),
+                      labelText: 'Email',
+                    ),
+                  ),
+                  verticalSpace,
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.person),
+                      labelText: 'Username',
+                    ),
+                  ),
+                  verticalSpace,
+                  PasswordFormField(),
+                ],
               ),
             ),
-            verticalSpace,
-            TextFormField(
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                icon: const Icon(Icons.person),
-                border: const OutlineInputBorder(),
-                errorBorder: textInputErrorBorder,
-                filled: true,
-                labelText: 'Username',
-              ),
-            ),
-            verticalSpace,
-            PasswordFormField(),
             const SizedBox(height: 24.0),
             ButtonBar(
               alignment: MainAxisAlignment.spaceBetween,
@@ -52,17 +53,8 @@ class _AuthFormState extends State<AuthForm> {
                 TextButton(
                   child: const Text('Sign Up Instead'),
                   onPressed: () {},
-                  style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(thm.accentColor),
-                  ),
                 ),
-                ElevatedButton(
-                  child: const Text('Sign In'),
-                  onPressed: () {},
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(thm.accentColor),
-                  ),
-                ),
+                ElevatedButton(child: const Text('Sign In'), onPressed: () {}),
               ],
             ),
           ],

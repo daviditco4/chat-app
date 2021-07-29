@@ -7,6 +7,31 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Chat App', home: AuthPage());
+    const primaryColor = Colors.purple;
+    final defaultTextTheme = Typography.material2018().englishLike;
+
+    return MaterialApp(
+      title: 'Chat App',
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData.from(
+        colorScheme: ColorScheme.dark(
+          primary: primaryColor,
+          secondary: Colors.deepOrange.shade300,
+          onPrimary: Colors.white,
+        ),
+        textTheme: defaultTextTheme.apply(fontFamily: 'Oxygen'),
+      ).copyWith(
+        primaryColor: primaryColor,
+        primaryColorBrightness: Brightness.dark,
+        primaryColorLight: const Color(0xFFD05CE3),
+        primaryColorDark: const Color(0xFF6A0080),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+          filled: true,
+        ),
+        fixTextFieldOutlineLabel: true,
+      ),
+      home: AuthPage(),
+    );
   }
 }
