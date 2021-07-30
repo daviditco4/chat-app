@@ -9,7 +9,7 @@ class AuthPage extends StatelessWidget {
       backgroundColor: Theme.of(context).primaryColor,
       body: Center(
         child: Card(
-          margin: const EdgeInsets.all(36.0),
+          margin: const EdgeInsets.all(30.0),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: AuthForm(),

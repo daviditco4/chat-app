@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'password_form_field.dart';
+import 'auth_fields_column.dart';
+
+enum AuthMode { signin, signup }
 
 class AuthForm extends StatefulWidget {
   @override
@@ -8,53 +10,65 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _userInput = <String, String>{};
+  var _authMode = AuthMode.signin;
+
+  void _switchAuthMode() {
+    setState(
+      () {
+        final signinMode = AuthMode.signin;
+        _authMode = (_authMode == signinMode) ? AuthMode.signup : signinMode;
+      },
+    );
+  }
+
+  void _submit() {
+    final form = _formKey.currentState!;
+
+    if (form.validate()) {
+      form.save();
+
+      switch (_authMode) {
+        case AuthMode.signin:
+          print('Signing in with values: $_userInput');
+          break;
+        case AuthMode.signup:
+          print('Signing up with values: $_userInput');
+          break;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final thm = Theme.of(context);
-    const verticalSpace = SizedBox(height: 12.0);
+    final isSigninMode = (_authMode == AuthMode.signin);
 
     return Form(
+      key: _formKey,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Theme(
-              data: thm.copyWith(
-                colorScheme: thm.colorScheme.copyWith(primary: thm.accentColor),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      icon: const Icon(Icons.email),
-                      labelText: 'Email',
-                    ),
-                  ),
-                  verticalSpace,
-                  TextFormField(
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      icon: Icon(Icons.person),
-                      labelText: 'Username',
-                    ),
-                  ),
-                  verticalSpace,
-                  PasswordFormField(),
-                ],
-              ),
+            AuthFieldsColumn(
+              authMode: _authMode,
+              onEmailSaved: (newValue) => _userInput['email'] = newValue!,
+              onUsernameSaved: (newValue) => _userInput['username'] = newValue!,
+              onPasswordSaved: (newValue) => _userInput['password'] = newValue!,
+              onSubmitted: (_) => _submit(),
             ),
             const SizedBox(height: 24.0),
             ButtonBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  child: const Text('Sign Up Instead'),
-                  onPressed: () {},
+                  child: Text('Sign ${isSigninMode ? 'Up' : 'In'} Instead'),
+                  onPressed: _switchAuthMode,
                 ),
-                ElevatedButton(child: const Text('Sign In'), onPressed: () {}),
+                ElevatedButton(
+                  child: Text('Sign ${isSigninMode ? 'In' : 'Up'}'),
+                  onPressed: _submit,
+                ),
               ],
             ),
           ],
