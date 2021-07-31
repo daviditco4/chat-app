@@ -32,24 +32,41 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
   );
 
   final _passwordController = TextEditingController();
-  final _confirmPwordFocusNode = FocusNode();
 
   @override
   void dispose() {
     _passwordController.dispose();
-    _confirmPwordFocusNode.dispose();
     super.dispose();
+  }
+
+  Widget _buildAnimatedChildVisibleOnCondition({
+    required bool condition,
+    required Widget child,
+    SizedBox topVerticalSpace = const SizedBox(),
+  }) {
+    return AnimatedCrossFade(
+      duration: const Duration(milliseconds: 300),
+      sizeCurve: Curves.ease,
+      alignment: Alignment.bottomCenter,
+      crossFadeState:
+          condition ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+      firstChild: Container(),
+      secondChild: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [topVerticalSpace, if (condition) child],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final th = Theme.of(context);
     const verticalSpace = SizedBox(height: 18.0);
     final sgninMode = (widget.authMode == AuthMode.signin);
 
     return Theme(
-      data: theme.copyWith(
-        colorScheme: theme.colorScheme.copyWith(primary: theme.accentColor),
+      data: th.copyWith(
+        colorScheme: th.colorScheme.copyWith(primary: th.colorScheme.secondary),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -67,23 +84,28 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
               labelText: 'Email',
             ),
           ),
-          verticalSpace,
-          TextFormField(
-            textInputAction: TextInputAction.next,
-            validator: (value) {
-              if (value == null || value.length < 8 || value.length > 20) {
-                return 'The username must have between 8 and 20 '
-                    'characters in total.';
-              } else if (!_usernameRegExp.hasMatch(value)) {
-                return 'The username must only contain letters, numbers '
-                    'or single dots/underscores in between.';
-              }
-              return null;
-            },
-            onSaved: widget.onUsernameSaved,
-            decoration: const InputDecoration(
-              icon: Icon(Icons.person),
-              labelText: 'Username',
+          _buildAnimatedChildVisibleOnCondition(
+            condition: !sgninMode,
+            topVerticalSpace: verticalSpace,
+            child: TextFormField(
+              textInputAction: TextInputAction.next,
+              validator: (val) {
+                if (sgninMode) {
+                  return null;
+                } else if (val == null || val.length < 8 || val.length > 20) {
+                  return 'The username must have between 8 and 20 characters '
+                      'in total.';
+                } else if (!_usernameRegExp.hasMatch(val)) {
+                  return 'The username must only contain letters, numbers '
+                      'or single dots/underscores in between.';
+                }
+                return null;
+              },
+              onSaved: widget.onUsernameSaved,
+              decoration: const InputDecoration(
+                icon: Icon(Icons.person),
+                labelText: 'Username',
+              ),
             ),
           ),
           verticalSpace,
@@ -92,28 +114,16 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
             onSubmitted: sgninMode ? widget.onSubmitted : null,
             onSaved: sgninMode ? widget.onPasswordSaved : null,
           ),
-          AnimatedCrossFade(
-            duration: const Duration(milliseconds: 300),
-            sizeCurve: Curves.ease,
-            alignment: Alignment.bottomCenter,
-            crossFadeState: sgninMode
-                ? CrossFadeState.showFirst
-                : CrossFadeState.showSecond,
-            firstChild: Container(),
-            secondChild: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                verticalSpace,
-                ConfirmPasswordFormField(
-                  focusNode: _confirmPwordFocusNode,
-                  validator: (v) {
-                    if (sgninMode || v == _passwordController.text) return null;
-                    return 'Passwords do not match.';
-                  },
-                  onFieldSubmitted: widget.onSubmitted,
-                  onSaved: widget.onPasswordSaved,
-                ),
-              ],
+          _buildAnimatedChildVisibleOnCondition(
+            condition: !sgninMode,
+            topVerticalSpace: verticalSpace,
+            child: ConfirmPasswordFormField(
+              validator: (value) {
+                if (sgninMode || value == _passwordController.text) return null;
+                return 'Passwords do not match.';
+              },
+              onFieldSubmitted: widget.onSubmitted,
+              onSaved: widget.onPasswordSaved,
             ),
           ),
         ],
