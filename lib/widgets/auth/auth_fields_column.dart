@@ -89,11 +89,7 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
           verticalSpace,
           PasswordFormField(
             controller: sgninMode ? null : _passwordController,
-            onSubmitted: sgninMode
-                ? widget.onSubmitted
-                : (_) {
-                    FocusScope.of(context).requestFocus(_confirmPwordFocusNode);
-                  },
+            onSubmitted: sgninMode ? widget.onSubmitted : null,
             onSaved: sgninMode ? widget.onPasswordSaved : null,
           ),
           AnimatedCrossFade(

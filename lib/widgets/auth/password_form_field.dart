@@ -42,6 +42,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
         icon: const Icon(Icons.password),
         labelText: 'Password',
         suffixIcon: InkWell(
+          canRequestFocus: false,
           onTap: () => setState(() => _obscureText = !_obscureText),
           customBorder: const CircleBorder(),
           child: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
