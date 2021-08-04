@@ -10,6 +10,7 @@ class AuthFieldsColumn extends StatefulWidget {
     required this.onEmailSaved,
     required this.onUsernameSaved,
     required this.onPasswordSaved,
+    this.enabled,
     this.onSubmitted,
   });
 
@@ -17,6 +18,7 @@ class AuthFieldsColumn extends StatefulWidget {
   final void Function(String? newValue) onEmailSaved;
   final void Function(String? newValue) onUsernameSaved;
   final void Function(String? newValue) onPasswordSaved;
+  final bool? enabled;
   final void Function(String value)? onSubmitted;
 
   @override
@@ -72,6 +74,7 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextFormField(
+            enabled: widget.enabled,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             validator: (value) {
@@ -88,6 +91,7 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
             condition: !sgninMode,
             topVerticalSpace: verticalSpace,
             child: TextFormField(
+              enabled: widget.enabled,
               textInputAction: TextInputAction.next,
               validator: (val) {
                 if (sgninMode) {
@@ -110,6 +114,7 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
           ),
           verticalSpace,
           PasswordFormField(
+            enabled: widget.enabled,
             controller: sgninMode ? null : _passwordController,
             onSubmitted: sgninMode ? widget.onSubmitted : null,
             onSaved: sgninMode ? widget.onPasswordSaved : null,
@@ -122,6 +127,7 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
                 if (sgninMode || value == _passwordController.text) return null;
                 return 'Passwords do not match.';
               },
+              enabled: widget.enabled,
               onFieldSubmitted: widget.onSubmitted,
               onSaved: widget.onPasswordSaved,
             ),

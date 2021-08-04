@@ -4,12 +4,14 @@ class ConfirmPasswordFormField extends StatefulWidget {
   const ConfirmPasswordFormField({
     required this.validator,
     required this.onSaved,
+    this.enabled,
     this.focusNode,
     this.onFieldSubmitted,
   });
 
   final String? Function(String? value) validator;
   final void Function(String? newValue) onSaved;
+  final bool? enabled;
   final FocusNode? focusNode;
   final void Function(String value)? onFieldSubmitted;
 
@@ -25,6 +27,7 @@ class _ConfirmPasswordFormFieldState extends State<ConfirmPasswordFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: widget.enabled,
       focusNode: widget.focusNode,
       obscureText: _obscureText,
       keyboardType: TextInputType.visiblePassword,

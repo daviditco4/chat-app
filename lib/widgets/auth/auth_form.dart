@@ -5,6 +5,14 @@ import 'auth_fields_column.dart';
 enum AuthMode { signin, signup }
 
 class AuthForm extends StatefulWidget {
+  const AuthForm(this.onFormSubmitted);
+
+  final Future<void> Function(
+    BuildContext context,
+    Map<String, String> authData,
+    bool signup,
+  ) onFormSubmitted;
+
   @override
   _AuthFormState createState() => _AuthFormState();
 }
@@ -13,6 +21,7 @@ class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
   final _userInput = <String, String>{};
   var _authMode = AuthMode.signin;
+  var _isLoading = false;
 
   void _switchAuthMode() {
     setState(
@@ -23,20 +32,15 @@ class _AuthFormState extends State<AuthForm> {
     );
   }
 
-  void _submit() {
+  void _submit() async {
     final form = _formKey.currentState!;
 
     if (form.validate()) {
       form.save();
-
-      switch (_authMode) {
-        case AuthMode.signin:
-          print('Signing in with values: $_userInput');
-          break;
-        case AuthMode.signup:
-          print('Signing up with values: $_userInput');
-          break;
-      }
+      final isSignupMode = (_authMode == AuthMode.signup);
+      setState(() => _isLoading = true);
+      await widget.onFormSubmitted(context, _userInput, isSignupMode);
+      setState(() => _isLoading = false);
     }
   }
 
@@ -55,22 +59,29 @@ class _AuthFormState extends State<AuthForm> {
               onEmailSaved: (newValue) => _userInput['email'] = newValue!,
               onUsernameSaved: (newValue) => _userInput['username'] = newValue!,
               onPasswordSaved: (newValue) => _userInput['password'] = newValue!,
+              enabled: !_isLoading,
               onSubmitted: (_) => _submit(),
             ),
             const SizedBox(height: 24.0),
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  child: Text('Sign ${isSigninMode ? 'Up' : 'In'} Instead'),
-                  onPressed: _switchAuthMode,
-                ),
-                ElevatedButton(
-                  child: Text('Sign ${isSigninMode ? 'In' : 'Up'}'),
-                  onPressed: _submit,
-                ),
-              ],
-            ),
+            if (_isLoading)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 30.0),
+                child: SizedBox(child: LinearProgressIndicator()),
+              )
+            else
+              ButtonBar(
+                alignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    child: Text('Sign ${isSigninMode ? 'Up' : 'In'} Instead'),
+                    onPressed: _switchAuthMode,
+                  ),
+                  ElevatedButton(
+                    child: Text('Sign ${isSigninMode ? 'In' : 'Up'}'),
+                    onPressed: _submit,
+                  ),
+                ],
+              ),
           ],
         ),
       ),

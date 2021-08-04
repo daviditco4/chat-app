@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 
 class PasswordFormField extends StatefulWidget {
-  const PasswordFormField({this.controller, this.onSubmitted, this.onSaved});
+  const PasswordFormField({
+    this.enabled,
+    this.controller,
+    this.onSubmitted,
+    this.onSaved,
+  });
+
+  final bool? enabled;
   final TextEditingController? controller;
   final void Function(String value)? onSubmitted;
   final void Function(String? newValue)? onSaved;
+
   @override
   _PasswordFormFieldState createState() => _PasswordFormFieldState();
 }
@@ -21,6 +29,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
     final signinMode = (widget.onSaved != null);
 
     return TextFormField(
+      enabled: widget.enabled,
       controller: widget.controller,
       obscureText: _obscureText,
       keyboardType: TextInputType.visiblePassword,

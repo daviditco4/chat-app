@@ -1,6 +1,10 @@
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/auth_page.dart';
+import 'pages/chat_page.dart';
+import 'pages/splash_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -37,7 +41,14 @@ class MyApp extends StatelessWidget {
           ),
           fixTextFieldOutlineLabel: true,
         ),
-        home: AuthPage(),
+        home: StreamBuilder<FirebaseUser?>(
+          stream: FirebaseAuth.instance.onAuthStateChanged,
+          builder: (_, snap) {
+            final isWaiting = (snap.connectionState == ConnectionState.waiting);
+            if (isWaiting) return SplashPage();
+            return snap.hasData ? ChatPage() : AuthPage();
+          },
+        ),
       ),
     );
   }
