@@ -4,60 +4,47 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/chat/messages_list_view.dart';
+
 class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final sch = Theme.of(context).colorScheme;
-    const msgsCollectionPath = 'chats/cLG4gutEgm0MutC2aDyu/messages';
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat'),
         actions: [
           PopupMenuButton(
-            itemBuilder: (_) {
+            itemBuilder: (ctx) {
+              final colorSch = Theme.of(ctx).colorScheme;
+
               return [
                 PopupMenuItem(
                   value: 'signout',
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.logout, color: sch.error),
+                      Icon(Icons.logout, color: colorSch.error),
                       const SizedBox(width: 24.0),
-                      Text('Sign Out', style: TextStyle(color: sch.error)),
+                      Text('Sign Out', style: TextStyle(color: colorSch.error)),
                     ],
                   ),
                 ),
               ];
             },
-            onSelected: (value) => FirebaseAuth.instance.signOut(),
+            onSelected: (value) {
+              if (value == 'signout') FirebaseAuth.instance.signOut();
+            },
           ),
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection(msgsCollectionPath).snapshots(),
-        builder: (_, snapshot) {
-          final List<DocumentSnapshot>? documents;
-
-          return snapshot.connectionState == ConnectionState.waiting
-              ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  padding: const EdgeInsets.all(12.0),
-                  reverse: true,
-                  itemCount: (documents = snapshot.data!.documents).length,
-                  itemBuilder: (_, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 6.0),
-                      child: Text(documents![index]['text']),
-                    );
-                  },
-                );
-        },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [Expanded(child: MessagesListView()), Container()],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.send),
         onPressed: () {
-          Firestore.instance.collection(msgsCollectionPath).add(
+          Firestore.instance.collection('messages').add(
             {'text': DateTime.now().toString()},
           );
         },
