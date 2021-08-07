@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 class MessagesListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final msgsCollection = Firestore.instance.collection('messages');
+
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('messages').snapshots(),
+      stream: msgsCollection.orderBy('createdAt', descending: true).snapshots(),
       builder: (_, snapshot) {
         final List<DocumentSnapshot>? documents;
 

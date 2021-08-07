@@ -24,12 +24,10 @@ class _AuthFormState extends State<AuthForm> {
   var _isLoading = false;
 
   void _switchAuthMode() {
-    setState(
-      () {
-        final signinMode = AuthMode.signin;
-        _authMode = (_authMode == signinMode) ? AuthMode.signup : signinMode;
-      },
-    );
+    setState(() {
+      final signinMode = AuthMode.signin;
+      _authMode = (_authMode == signinMode) ? AuthMode.signup : signinMode;
+    });
   }
 
   void _submit() async {

@@ -1,10 +1,9 @@
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:cloud_firestore/cloud_firestore.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/chat/messages_list_view.dart';
+import '../widgets/chat/send_message_field.dart';
 
 class ChatPage extends StatelessWidget {
   @override
@@ -39,15 +38,11 @@ class ChatPage extends StatelessWidget {
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [Expanded(child: MessagesListView()), Container()],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.send),
-        onPressed: () {
-          Firestore.instance.collection('messages').add(
-            {'text': DateTime.now().toString()},
-          );
-        },
+        children: [
+          Expanded(child: MessagesListView()),
+          const SizedBox(height: 8.0),
+          SendMessageField(),
+        ],
       ),
     );
   }

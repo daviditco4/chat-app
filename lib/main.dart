@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const primaryColor = Colors.purple;
+    final secondaryColor = Colors.deepOrange.shade300;
     final defaultTextTheme = Typography.material2018().englishLike;
 
     return GestureDetector(
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         darkTheme: ThemeData.from(
           colorScheme: ColorScheme.dark(
             primary: primaryColor,
-            secondary: Colors.deepOrange.shade300,
+            secondary: secondaryColor,
             onPrimary: Colors.white,
           ),
           textTheme: defaultTextTheme.apply(fontFamily: 'Oxygen'),
@@ -38,6 +39,10 @@ class MyApp extends StatelessWidget {
             border: OutlineInputBorder(),
             filled: true,
             errorMaxLines: 3,
+          ),
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: secondaryColor,
+            selectionHandleColor: secondaryColor,
           ),
           fixTextFieldOutlineLabel: true,
         ),
