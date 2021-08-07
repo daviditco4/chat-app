@@ -1,5 +1,7 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SendMessageField extends StatefulWidget {
@@ -11,11 +13,15 @@ class _SendMessageFieldState extends State<SendMessageField> {
   final _textController = TextEditingController();
   var _sendEnabled = false;
 
-  void _send() {
+  void _send() async {
     setState(() => _sendEnabled = false);
+    final messageText = _textController.text.trim();
+    final user = await FirebaseAuth.instance.currentUser();
+
     Firestore.instance.collection('messages').add(
-      {'text': _textController.text.trim(), 'createdAt': Timestamp.now()},
+      {'text': messageText, 'createdAt': Timestamp.now(), 'fromUid': user.uid},
     );
+
     _textController.clear();
   }
 

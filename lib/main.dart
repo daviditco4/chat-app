@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
           primaryColorBrightness: Brightness.dark,
           primaryColorLight: const Color(0xFFD05CE3),
           primaryColorDark: const Color(0xFF6A0080),
+          applyElevationOverlayColor: true,
           inputDecorationTheme: const InputDecorationTheme(
             border: OutlineInputBorder(),
             filled: true,
