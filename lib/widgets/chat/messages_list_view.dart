@@ -18,6 +18,7 @@ class MessagesListView extends StatelessWidget {
         if (userSnapshot.connectionState != ConnectionState.done) {
           return centeredLoadingSpinner;
         }
+
         return StreamBuilder<QuerySnapshot>(
           stream: msgsCollec.orderBy('createdAt', descending: true).snapshots(),
           builder: (_, msgsSnapshot) {
@@ -35,6 +36,7 @@ class MessagesListView extends StatelessWidget {
                         key: ValueKey(document.documentID),
                         text: document['text'],
                         fromMe: document['fromUid'] == userSnapshot.data!.uid,
+                        creatorUsername: document['fromUsername'],
                       );
                     },
                   );

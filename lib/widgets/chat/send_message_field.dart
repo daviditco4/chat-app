@@ -15,11 +15,15 @@ class _SendMessageFieldState extends State<SendMessageField> {
 
   void _send() async {
     setState(() => _sendEnabled = false);
-    final messageText = _textController.text.trim();
     final user = await FirebaseAuth.instance.currentUser();
 
     Firestore.instance.collection('messages').add(
-      {'text': messageText, 'createdAt': Timestamp.now(), 'fromUid': user.uid},
+      {
+        'text': _textController.text.trim(),
+        'createdAt': Timestamp.now(),
+        'fromUid': user.uid,
+        'fromUsername': user.displayName,
+      },
     );
 
     _textController.clear();
