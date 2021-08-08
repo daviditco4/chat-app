@@ -7,7 +7,7 @@ enum AuthMode { signin, signup }
 class AuthForm extends StatefulWidget {
   const AuthForm(this.onFormSubmitted);
 
-  final Future<void> Function(
+  final Future<bool> Function(
     BuildContext context,
     Map<String, String> authData,
     bool signup,
@@ -35,10 +35,10 @@ class _AuthFormState extends State<AuthForm> {
 
     if (form.validate()) {
       form.save();
-      final isSignupMode = (_authMode == AuthMode.signup);
+      final sgnupM = (_authMode == AuthMode.signup);
       setState(() => _isLoading = true);
-      await widget.onFormSubmitted(context, _userInput, isSignupMode);
-      setState(() => _isLoading = false);
+      final success = await widget.onFormSubmitted(context, _userInput, sgnupM);
+      if (!success) setState(() => _isLoading = false);
     }
   }
 

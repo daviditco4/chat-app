@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import '../widgets/auth/auth_form.dart';
 
 class AuthPage extends StatelessWidget {
-  Future<void> _authenticate(
+  Future<bool> _authenticate(
     BuildContext context,
     Map<String, String> authData,
     bool signup,
@@ -29,6 +29,8 @@ class AuthPage extends StatelessWidget {
           password: authData['password'],
         );
       }
+
+      return true;
     } on PlatformException catch (e) {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
       final theme = Theme.of(context);
@@ -43,15 +45,18 @@ class AuthPage extends StatelessWidget {
           ),
         ),
       );
+
+      return false;
     } catch (e) {
       print(e);
+      return false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Card(
           margin: const EdgeInsets.all(30.0),
