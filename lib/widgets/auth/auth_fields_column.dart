@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'auth_form.dart' show AuthMode;
 import 'confirm_password_form_field.dart';
 import 'password_form_field.dart';
+import 'user_image_picker.dart';
 
 class AuthFieldsColumn extends StatefulWidget {
   const AuthFieldsColumn({
@@ -44,35 +45,53 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
   Widget _buildAnimatedChildVisibleOnCondition({
     required bool condition,
     required Widget child,
-    SizedBox topVerticalSpace = const SizedBox(),
+    SizedBox? onInvisibleWidget,
+    required SizedBox verticalSpace,
+    VerticalDirection verticalSpaceLocation = VerticalDirection.up,
   }) {
+    final hasTopSpace = (verticalSpaceLocation == VerticalDirection.up);
+
     return AnimatedCrossFade(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 500),
       sizeCurve: Curves.ease,
-      alignment: Alignment.bottomCenter,
+      alignment: hasTopSpace ? Alignment.bottomCenter : Alignment.topCenter,
       crossFadeState:
           condition ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-      firstChild: Container(),
+      firstChild: onInvisibleWidget ?? Container(),
       secondChild: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [topVerticalSpace, if (condition) child],
+        children: [
+          if (hasTopSpace) verticalSpace,
+          if (condition) child,
+          if (!hasTopSpace) verticalSpace,
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final th = Theme.of(context);
+    final theme = Theme.of(context);
     const verticalSpace = SizedBox(height: 18.0);
-    final sgninMode = (widget.authMode == AuthMode.signin);
+    final isSigninMode = (widget.authMode == AuthMode.signin);
 
     return Theme(
-      data: th.copyWith(
-        colorScheme: th.colorScheme.copyWith(primary: th.colorScheme.secondary),
+      data: theme.copyWith(
+        colorScheme: theme.colorScheme.copyWith(
+          primary: theme.colorScheme.secondary,
+          onPrimary: theme.colorScheme.onSecondary,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          _buildAnimatedChildVisibleOnCondition(
+            condition: !isSigninMode,
+            child: UserImagePicker(),
+            onInvisibleWidget: SizedBox.fromSize(size: const Size.square(6.0)),
+            verticalSpace: verticalSpace,
+            verticalSpaceLocation: VerticalDirection.down,
+          ),
           TextFormField(
             enabled: widget.enabled,
             keyboardType: TextInputType.emailAddress,
@@ -88,18 +107,16 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
             ),
           ),
           _buildAnimatedChildVisibleOnCondition(
-            condition: !sgninMode,
-            topVerticalSpace: verticalSpace,
+            condition: !isSigninMode,
+            verticalSpace: verticalSpace,
             child: TextFormField(
               enabled: widget.enabled,
               textInputAction: TextInputAction.next,
-              validator: (val) {
-                if (sgninMode) {
-                  return null;
-                } else if (val == null || val.length < 8 || val.length > 20) {
+              validator: (value) {
+                if (value == null || value.length < 8 || value.length > 20) {
                   return 'The username must have between 8 and 20 characters '
                       'in total.';
-                } else if (!_usernameRegExp.hasMatch(val)) {
+                } else if (!_usernameRegExp.hasMatch(value)) {
                   return 'The username must only contain letters, numbers '
                       'or single dots/underscores in between.';
                 }
@@ -115,16 +132,16 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
           verticalSpace,
           PasswordFormField(
             enabled: widget.enabled,
-            controller: sgninMode ? null : _passwordController,
-            onSubmitted: sgninMode ? widget.onSubmitted : null,
-            onSaved: sgninMode ? widget.onPasswordSaved : null,
+            controller: isSigninMode ? null : _passwordController,
+            onSubmitted: isSigninMode ? widget.onSubmitted : null,
+            onSaved: isSigninMode ? widget.onPasswordSaved : null,
           ),
           _buildAnimatedChildVisibleOnCondition(
-            condition: !sgninMode,
-            topVerticalSpace: verticalSpace,
+            condition: !isSigninMode,
+            verticalSpace: verticalSpace,
             child: ConfirmPasswordFormField(
               validator: (value) {
-                if (sgninMode || value == _passwordController.text) return null;
+                if (value == _passwordController.text) return null;
                 return 'Passwords do not match.';
               },
               enabled: widget.enabled,
