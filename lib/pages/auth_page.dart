@@ -1,30 +1,45 @@
+import 'dart:io' show File;
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:path/path.dart' as path show extension;
 
+import '../helpers/snack_bars.dart';
 import '../widgets/auth/auth_form.dart';
 
 class AuthPage extends StatelessWidget {
-  Future<bool> _authenticate(
-    BuildContext context,
-    Map<String, String> authData,
-    bool signup,
-  ) async {
+  Future<bool> _authenticate({
+    required BuildContext context,
+    File? userImage,
+    required Map<String, String> authData,
+    bool signup = false,
+  }) async {
     try {
-      final AuthResult result;
-
       if (signup) {
-        result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        userImage!;
+
+        final res = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: authData['email'],
           password: authData['password'],
         );
 
+        final imageRef = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child(res.user.uid + path.extension(userImage.path));
+        await imageRef.putFile(userImage).onComplete;
+        final imageUrl = await imageRef.getDownloadURL();
+
         final userProfileInfo = UserUpdateInfo();
         userProfileInfo.displayName = authData['username'];
-        await result.user.updateProfile(userProfileInfo);
+        userProfileInfo.photoUrl = imageUrl;
+        await res.user.updateProfile(userProfileInfo);
       } else {
-        result = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: authData['email'],
           password: authData['password'],
         );
@@ -32,25 +47,12 @@ class AuthPage extends StatelessWidget {
 
       return true;
     } on PlatformException catch (e) {
-      final scaffoldMessenger = ScaffoldMessenger.of(context);
-      final theme = Theme.of(context);
-
-      scaffoldMessenger.removeCurrentSnackBar();
-      scaffoldMessenger.showSnackBar(
-        SnackBar(
-          backgroundColor: theme.colorScheme.error,
-          content: Text(
-            e.message ?? 'An error ocurred, please try again.',
-            style: TextStyle(color: theme.colorScheme.onError),
-          ),
-        ),
-      );
-
-      return false;
-    } catch (e) {
+      SnackBars.showError(context: context, message: e.message);
+    } on Exception catch (e) {
       print(e);
-      return false;
     }
+
+    return false;
   }
 
   @override

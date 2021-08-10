@@ -1,10 +1,13 @@
-import 'dart:io';
+import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:image_picker/image_picker.dart' as p;
 
 class UserImagePicker extends StatefulWidget {
+  const UserImagePicker(this.pickImageCallback, {this.enabled = true});
+  final void Function(File pickedImage) pickImageCallback;
+  final bool enabled;
   @override
   _UserImagePickerState createState() => _UserImagePickerState();
 }
@@ -14,17 +17,19 @@ class _UserImagePickerState extends State<UserImagePicker> {
 
   Future<void> _pickImage({required p.ImageSource source}) async {
     final imagePicker = p.ImagePicker();
-    const imageDim = 500.0;
+    const imageDim = 250.0;
+
     final p.PickedFile? image = await imagePicker.getImage(
       source: source,
+      preferredCameraDevice: p.CameraDevice.front,
       maxWidth: imageDim,
       maxHeight: imageDim,
-      preferredCameraDevice: p.CameraDevice.front,
+      imageQuality: 60,
     );
 
     if (image != null) {
       setState(() => _pickedImg = File(image.path));
-      // widget.pickImgCallback(_image!);
+      widget.pickImageCallback(_pickedImg!);
     }
   }
 
@@ -46,12 +51,16 @@ class _UserImagePickerState extends State<UserImagePicker> {
         TextButton.icon(
           icon: const Icon(Icons.camera),
           label: const Text('Take Picture'),
-          onPressed: () => _pickImage(source: p.ImageSource.camera),
+          onPressed: widget.enabled
+              ? () => _pickImage(source: p.ImageSource.camera)
+              : null,
         ),
         TextButton.icon(
           icon: const Icon(Icons.photo_library),
           label: const Text('Choose From Gallery'),
-          onPressed: () => _pickImage(source: p.ImageSource.gallery),
+          onPressed: widget.enabled
+              ? () => _pickImage(source: p.ImageSource.gallery)
+              : null,
         ),
       ],
     );

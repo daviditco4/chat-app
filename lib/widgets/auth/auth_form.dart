@@ -1,5 +1,8 @@
+import 'dart:io' show File;
+
 import 'package:flutter/material.dart';
 
+import '../../helpers/snack_bars.dart';
 import 'auth_fields_column.dart';
 
 enum AuthMode { signin, signup }
@@ -7,11 +10,12 @@ enum AuthMode { signin, signup }
 class AuthForm extends StatefulWidget {
   const AuthForm(this.onFormSubmitted);
 
-  final Future<bool> Function(
-    BuildContext context,
-    Map<String, String> authData,
+  final Future<bool> Function({
+    required BuildContext context,
+    File? userImage,
+    required Map<String, String> authData,
     bool signup,
-  ) onFormSubmitted;
+  }) onFormSubmitted;
 
   @override
   _AuthFormState createState() => _AuthFormState();
@@ -19,6 +23,7 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
+  File? _pickedUserImage;
   final _userInput = <String, String>{};
   var _authMode = AuthMode.signin;
   var _isLoading = false;
@@ -33,11 +38,22 @@ class _AuthFormState extends State<AuthForm> {
   void _submit() async {
     final form = _formKey.currentState!;
 
+    if (_authMode == AuthMode.signup && _pickedUserImage == null) {
+      SnackBars.showError(context: context, message: 'Please pick a photo.');
+      return;
+    }
+
     if (form.validate()) {
       form.save();
-      final sgnupM = (_authMode == AuthMode.signup);
       setState(() => _isLoading = true);
-      final success = await widget.onFormSubmitted(context, _userInput, sgnupM);
+
+      final success = await widget.onFormSubmitted(
+        context: context,
+        userImage: _pickedUserImage,
+        authData: _userInput,
+        signup: _authMode == AuthMode.signup,
+      );
+
       if (!success) setState(() => _isLoading = false);
     }
   }
@@ -54,6 +70,7 @@ class _AuthFormState extends State<AuthForm> {
           children: [
             AuthFieldsColumn(
               authMode: _authMode,
+              onUserImageSaved: (newValue) => _pickedUserImage = newValue,
               onEmailSaved: (newValue) => _userInput['email'] = newValue!,
               onUsernameSaved: (newValue) => _userInput['username'] = newValue!,
               onPasswordSaved: (newValue) => _userInput['password'] = newValue!,

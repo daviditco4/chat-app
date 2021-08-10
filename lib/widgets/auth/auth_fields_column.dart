@@ -1,3 +1,5 @@
+import 'dart:io' show File;
+
 import 'package:flutter/material.dart';
 
 import 'auth_form.dart' show AuthMode;
@@ -8,6 +10,7 @@ import 'user_image_picker.dart';
 class AuthFieldsColumn extends StatefulWidget {
   const AuthFieldsColumn({
     required this.authMode,
+    required this.onUserImageSaved,
     required this.onEmailSaved,
     required this.onUsernameSaved,
     required this.onPasswordSaved,
@@ -16,6 +19,7 @@ class AuthFieldsColumn extends StatefulWidget {
   });
 
   final AuthMode authMode;
+  final void Function(File newValue) onUserImageSaved;
   final void Function(String? newValue) onEmailSaved;
   final void Function(String? newValue) onUsernameSaved;
   final void Function(String? newValue) onPasswordSaved;
@@ -87,7 +91,10 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
         children: [
           _buildAnimatedChildVisibleOnCondition(
             condition: !isSigninMode,
-            child: UserImagePicker(),
+            child: UserImagePicker(
+              widget.onUserImageSaved,
+              enabled: widget.enabled ?? true,
+            ),
             onInvisibleWidget: SizedBox.fromSize(size: const Size.square(6.0)),
             verticalSpace: verticalSpace,
             verticalSpaceLocation: VerticalDirection.down,
