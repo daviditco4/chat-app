@@ -23,6 +23,7 @@ class MessagesListView extends StatelessWidget {
           stream: msgsCollec.orderBy('createdAt', descending: true).snapshots(),
           builder: (_, msgsSnapshot) {
             final List<DocumentSnapshot>? docs;
+            String? lastUid;
 
             return msgsSnapshot.connectionState == ConnectionState.waiting
                 ? centeredLoadingSpinner
@@ -31,12 +32,17 @@ class MessagesListView extends StatelessWidget {
                     itemCount: (docs = msgsSnapshot.data!.documents).length,
                     itemBuilder: (_, index) {
                       final document = docs![index];
+                      final cr = document['creator'] as Map<String, dynamic>;
+                      final uid = cr['uid'];
+                      final crPtoUrl = (uid != lastUid) ? cr['photoUrl'] : null;
+                      lastUid = uid;
 
                       return MessageBubble(
                         key: ValueKey(document.documentID),
                         text: document['text'],
-                        fromMe: document['fromUid'] == userSnapshot.data!.uid,
-                        creatorUsername: document['fromUsername'],
+                        byMe: uid == userSnapshot.data!.uid,
+                        creatorUsername: cr['username'],
+                        creatorPhotoUrl: crPtoUrl,
                       );
                     },
                   );

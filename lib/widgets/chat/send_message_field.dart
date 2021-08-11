@@ -21,8 +21,11 @@ class _SendMessageFieldState extends State<SendMessageField> {
       {
         'text': _textController.text.trim(),
         'createdAt': Timestamp.now(),
-        'fromUid': user.uid,
-        'fromUsername': user.displayName,
+        'creator': {
+          'uid': user.uid,
+          'username': user.displayName,
+          'photoUrl': user.photoUrl,
+        },
       },
     );
 
