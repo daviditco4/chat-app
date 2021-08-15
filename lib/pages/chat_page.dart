@@ -2,8 +2,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../main.dart' show CHAT_TOPIC;
 import '../widgets/chat/messages_list_view.dart';
 import '../widgets/chat/send_message_field.dart';
+
+const MESSAGES_COLLECTION_PATH = '${CHAT_TOPIC}Messages';
 
 class ChatPage extends StatelessWidget {
   @override

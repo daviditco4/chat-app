@@ -4,13 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../pages/chat_page.dart' show MESSAGES_COLLECTION_PATH;
 import 'message_bubble.dart';
 
 class MessagesListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const centeredLoadingSpinner = Center(child: CircularProgressIndicator());
-    final msgsCollec = Firestore.instance.collection('messages');
+    final msgsCollec = Firestore.instance.collection(MESSAGES_COLLECTION_PATH);
 
     return FutureBuilder<FirebaseUser>(
       future: FirebaseAuth.instance.currentUser(),

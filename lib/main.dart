@@ -1,10 +1,14 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/auth_page.dart';
 import 'pages/chat_page.dart';
 import 'pages/splash_page.dart';
+
+const CHAT_TOPIC = 'public';
 
 void main() => runApp(MyApp());
 
@@ -51,8 +55,18 @@ class MyApp extends StatelessWidget {
           stream: FirebaseAuth.instance.onAuthStateChanged,
           builder: (_, snap) {
             final isWaiting = (snap.connectionState == ConnectionState.waiting);
-            if (isWaiting) return SplashPage();
-            return snap.hasData ? ChatPage() : AuthPage();
+            final firebaseMessaging = FirebaseMessaging();
+
+            if (isWaiting) {
+              firebaseMessaging.requestNotificationPermissions();
+              return SplashPage();
+            } else if (!snap.hasData) {
+              firebaseMessaging.unsubscribeFromTopic(CHAT_TOPIC);
+              return AuthPage();
+            }
+
+            firebaseMessaging.subscribeToTopic(CHAT_TOPIC);
+            return ChatPage();
           },
         ),
       ),

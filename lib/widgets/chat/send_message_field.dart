@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../pages/chat_page.dart' show MESSAGES_COLLECTION_PATH;
+
 class SendMessageField extends StatefulWidget {
   @override
   _SendMessageFieldState createState() => _SendMessageFieldState();
@@ -17,7 +19,7 @@ class _SendMessageFieldState extends State<SendMessageField> {
     setState(() => _sendEnabled = false);
     final user = await FirebaseAuth.instance.currentUser();
 
-    Firestore.instance.collection('messages').add(
+    Firestore.instance.collection(MESSAGES_COLLECTION_PATH).add(
       {
         'text': _textController.text.trim(),
         'createdAt': Timestamp.now(),

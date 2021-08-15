@@ -20,8 +20,8 @@ class MessageBubble extends StatelessWidget {
     final sch = theme.colorScheme;
     const verticalMarginValue = 6.0;
     final screenWidth = MediaQuery.of(context).size.width;
-    const rV = 16.0;
-    const bigRadius = Radius.circular(rV);
+    const bubbleBigRadiusValue = 16.0;
+    const bigRadius = Radius.circular(bubbleBigRadiusValue);
     const smallRadius = Radius.circular(2.0);
     final borderRadius = BorderRadiusDirectional.only(
       topStart: bigRadius,
@@ -66,7 +66,10 @@ class MessageBubble extends StatelessWidget {
                   : ElevationOverlay.applyOverlay(context, sch.surface, 4.0),
               borderRadius: borderRadius,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: rV, vertical: 10.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: bubbleBigRadiusValue,
+              vertical: 10.0,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
