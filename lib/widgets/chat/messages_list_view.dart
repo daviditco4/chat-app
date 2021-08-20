@@ -14,33 +14,39 @@ class MessagesListView extends StatelessWidget {
 
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: msgCollec.orderBy(MessageKeys.crAt, descending: true).snapshots(),
-      builder: (_, messagesSnapshot) {
-        final List<DocumentSnapshot<Map<String, dynamic>>>? documents;
-        String? lastUid;
+      builder: (_, snapshot) {
+        final isWaiting = snapshot.connectionState == ConnectionState.waiting;
+        if (isWaiting) return const Center(child: CircularProgressIndicator());
 
-        return messagesSnapshot.connectionState == ConnectionState.waiting
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                reverse: true,
-                itemCount: (documents = messagesSnapshot.data!.docs).length,
-                itemBuilder: (_, index) {
-                  final document = documents![index];
-                  final docData = document.data()!;
-                  final cr = docData[MessageKeys.cr] as Map<String, dynamic>;
-                  final uid = cr[MessageKeys.uid];
-                  final photoURL = cr[MessageKeys.pto];
-                  final creatorPhotoURL = (uid != lastUid) ? photoURL : null;
-                  lastUid = uid;
+        final docs = snapshot.data!.docs;
+        final n = docs.length;
 
-                  return MessageBubble(
-                    key: ValueKey(document.id),
-                    text: docData[MessageKeys.txt],
-                    byMe: uid == FirebaseAuth.instance.currentUser!.uid,
-                    creatorUsername: cr[MessageKeys.usn],
-                    creatorPhotoURL: creatorPhotoURL,
-                  );
-                },
-              );
+        return ListView.builder(
+          reverse: true,
+          itemCount: n,
+          itemBuilder: (_, i) {
+            final document = docs[i];
+            final documentData = document.data();
+            const crKey = MessageKeys.cr;
+            const uidKey = MessageKeys.uid;
+            final creator = documentData[crKey];
+            final uid = creator[uidKey];
+            final usn = (i == n - 1 || uid != docs[i + 1].data()[crKey][uidKey])
+                ? creator[MessageKeys.usn]
+                : null;
+            final crPhoto = (i == 0 || uid != docs[i - 1].data()[crKey][uidKey])
+                ? creator[MessageKeys.pto]
+                : null;
+
+            return MessageBubble(
+              key: ValueKey(document.id),
+              text: documentData[MessageKeys.txt],
+              byMe: uid == FirebaseAuth.instance.currentUser!.uid,
+              creatorUsername: usn,
+              creatorPhotoURL: crPhoto,
+            );
+          },
+        );
       },
     );
   }
