@@ -14,6 +14,7 @@ class AuthFieldsColumn extends StatefulWidget {
     required this.onEmailSaved,
     required this.onUsernameSaved,
     required this.onPasswordSaved,
+    this.currentUserImage,
     this.enabled,
     this.onSubmitted,
   });
@@ -23,6 +24,7 @@ class AuthFieldsColumn extends StatefulWidget {
   final void Function(String? newValue) onEmailSaved;
   final void Function(String? newValue) onUsernameSaved;
   final void Function(String? newValue) onPasswordSaved;
+  final File? currentUserImage;
   final bool? enabled;
   final void Function(String value)? onSubmitted;
 
@@ -39,12 +41,6 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
   );
 
   final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   Widget _buildAnimatedChildVisibleOnCondition({
     required bool condition,
@@ -91,13 +87,14 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
         children: [
           _buildAnimatedChildVisibleOnCondition(
             condition: !isSigninMode,
-            child: UserImagePicker(
-              widget.onUserImageSaved,
-              enabled: widget.enabled ?? true,
-            ),
-            onInvisibleWidget: SizedBox.fromSize(size: const Size.square(6.0)),
+            onInvisibleWidget: const SizedBox(height: 6.0),
             verticalSpace: verticalSpace,
             verticalSpaceLocation: VerticalDirection.down,
+            child: UserImagePicker(
+              pickImageCallback: widget.onUserImageSaved,
+              initialImage: widget.currentUserImage,
+              enabled: widget.enabled ?? true,
+            ),
           ),
           TextFormField(
             enabled: widget.enabled,
@@ -159,5 +156,11 @@ class _AuthFieldsColumnState extends State<AuthFieldsColumn> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
   }
 }

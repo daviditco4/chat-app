@@ -37,6 +37,13 @@
             {
               "client_id": "625793743938-1edf2gdm41sgmmoh4g4edu700chr2r8a.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "625793743938-c63ivmlfv18pus9bdfe3l8fae72id7ri.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.daviditcovici.chatApp"
+              }
             }
           ]
         }

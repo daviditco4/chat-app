@@ -1,9 +1,8 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:cloud_firestore/cloud_firestore.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../helpers/message_keys.dart';
 import '../../pages/chat_page.dart' show MESSAGES_COLLECTION_PATH;
 
 class SendMessageField extends StatefulWidget {
@@ -16,28 +15,23 @@ class _SendMessageFieldState extends State<SendMessageField> {
   var _sendEnabled = false;
 
   void _send() async {
-    setState(() => _sendEnabled = false);
-    final user = await FirebaseAuth.instance.currentUser();
+    try {
+      setState(() => _sendEnabled = false);
+      final user = FirebaseAuth.instance.currentUser!;
 
-    Firestore.instance.collection(MESSAGES_COLLECTION_PATH).add(
-      {
-        'text': _textController.text.trim(),
-        'createdAt': Timestamp.now(),
-        'creator': {
-          'uid': user.uid,
-          'username': user.displayName,
-          'photoUrl': user.photoUrl,
+      FirebaseFirestore.instance.collection(MESSAGES_COLLECTION_PATH).add({
+        MessageKeys.txt: _textController.text.trim(),
+        MessageKeys.crAt: Timestamp.now(),
+        MessageKeys.cr: {
+          MessageKeys.uid: user.uid,
+          MessageKeys.usn: user.displayName,
+          MessageKeys.pto: user.photoURL,
         },
-      },
-    );
-
-    _textController.clear();
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
+      });
+      _textController.clear();
+    } on Exception catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -93,5 +87,11 @@ class _SendMessageFieldState extends State<SendMessageField> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
   }
 }

@@ -1,15 +1,12 @@
 import 'dart:io' show File;
 
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PlatformException;
 import 'package:path/path.dart' as path show extension;
 
 import '../helpers/snack_bars.dart';
-import '../widgets/auth/auth_form.dart';
+import '../widgets/auth/auth_form.dart' hide AuthMode;
 
 class AuthPage extends StatelessWidget {
   Future<bool> _authenticate({
@@ -23,35 +20,32 @@ class AuthPage extends StatelessWidget {
         userImage!;
 
         final res = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: authData['email'],
-          password: authData['password'],
+          email: authData['email']!,
+          password: authData['password']!,
         );
+        final user = res.user!;
 
         final imageRef = FirebaseStorage.instance
             .ref()
             .child('user_images')
-            .child(res.user.uid + path.extension(userImage.path));
-        await imageRef.putFile(userImage).onComplete;
-        final imageUrl = await imageRef.getDownloadURL();
+            .child(user.uid + path.extension(userImage.path));
+        await imageRef.putFile(userImage);
+        final imageURL = await imageRef.getDownloadURL();
 
-        final userProfileInfo = UserUpdateInfo();
-        userProfileInfo.displayName = authData['username'];
-        userProfileInfo.photoUrl = imageUrl;
-        await res.user.updateProfile(userProfileInfo);
+        await user.updateDisplayName(authData['username']!);
+        await user.updatePhotoURL(imageURL);
       } else {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: authData['email'],
-          password: authData['password'],
+          email: authData['email']!,
+          password: authData['password']!,
         );
       }
-
       return true;
-    } on PlatformException catch (e) {
+    } on FirebaseException catch (e) {
       SnackBars.showError(context: context, message: e.message);
     } on Exception catch (e) {
       print(e);
     }
-
     return false;
   }
 

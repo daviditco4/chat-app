@@ -30,18 +30,18 @@ class _AuthFormState extends State<AuthForm> {
 
   void _switchAuthMode() {
     setState(() {
-      final signinMode = AuthMode.signin;
+      const signinMode = AuthMode.signin;
       _authMode = (_authMode == signinMode) ? AuthMode.signup : signinMode;
     });
   }
 
   void _submit() async {
-    final form = _formKey.currentState!;
-
     if (_authMode == AuthMode.signup && _pickedUserImage == null) {
       SnackBars.showError(context: context, message: 'Please pick a photo.');
       return;
     }
+
+    final form = _formKey.currentState!;
 
     if (form.validate()) {
       form.save();
@@ -74,6 +74,7 @@ class _AuthFormState extends State<AuthForm> {
               onEmailSaved: (newValue) => _userInput['email'] = newValue!,
               onUsernameSaved: (newValue) => _userInput['username'] = newValue!,
               onPasswordSaved: (newValue) => _userInput['password'] = newValue!,
+              currentUserImage: _pickedUserImage,
               enabled: !_isLoading,
               onSubmitted: (_) => _submit(),
             ),

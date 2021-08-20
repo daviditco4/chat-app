@@ -6,12 +6,12 @@ class MessageBubble extends StatelessWidget {
     required this.text,
     required this.byMe,
     this.creatorUsername,
-    this.creatorPhotoUrl,
+    this.creatorPhotoURL,
   }) : super(key: key);
 
   final String text;
   final bool byMe;
-  final String? creatorUsername, creatorPhotoUrl;
+  final String? creatorUsername, creatorPhotoURL;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +40,12 @@ class MessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!byMe) ...[
-            if (creatorPhotoUrl != null)
+            if (creatorPhotoURL != null)
               CircleAvatar(
                 radius: creatorPhotoRadius,
                 backgroundColor: theme.primaryColorLight,
                 child: Icon(Icons.person_rounded, color: sch.background),
-                foregroundImage: NetworkImage(creatorPhotoUrl!),
+                foregroundImage: NetworkImage(creatorPhotoURL!),
               )
             else
               const SizedBox(width: creatorPhotoRadius * 2),
@@ -54,7 +54,7 @@ class MessageBubble extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(
               top: verticalMarginValue,
-              bottom: creatorPhotoUrl != null ? verticalMarginValue : 0.0,
+              bottom: creatorPhotoURL != null ? verticalMarginValue : 0.0,
             ),
             constraints: BoxConstraints(
               minWidth: screenWidth * 0.20,

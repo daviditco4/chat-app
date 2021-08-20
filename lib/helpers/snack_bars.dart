@@ -9,7 +9,7 @@ class SnackBars {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final theme = Theme.of(context);
 
-    scaffoldMessenger.removeCurrentSnackBar();
+    if (removePrevious) scaffoldMessenger.removeCurrentSnackBar();
     scaffoldMessenger.showSnackBar(
       SnackBar(
         backgroundColor: theme.colorScheme.error,

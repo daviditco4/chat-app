@@ -1,13 +1,22 @@
 import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
-// ignore: import_of_legacy_library_into_null_safe
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:image_picker/image_picker.dart' as p;
 
+import '../../helpers/snack_bars.dart';
+
 class UserImagePicker extends StatefulWidget {
-  const UserImagePicker(this.pickImageCallback, {this.enabled = true});
+  const UserImagePicker({
+    required this.pickImageCallback,
+    this.enabled = true,
+    this.initialImage,
+  });
+
   final void Function(File pickedImage) pickImageCallback;
   final bool enabled;
+  final File? initialImage;
+
   @override
   _UserImagePickerState createState() => _UserImagePickerState();
 }
@@ -15,21 +24,33 @@ class UserImagePicker extends StatefulWidget {
 class _UserImagePickerState extends State<UserImagePicker> {
   File? _pickedImg;
 
+  @override
+  void initState() {
+    super.initState();
+    _pickedImg = widget.initialImage;
+  }
+
   Future<void> _pickImage({required p.ImageSource source}) async {
-    final imagePicker = p.ImagePicker();
-    const imageDim = 250.0;
+    try {
+      final imagePicker = p.ImagePicker();
+      const imageDim = 250.0;
 
-    final p.PickedFile? image = await imagePicker.getImage(
-      source: source,
-      preferredCameraDevice: p.CameraDevice.front,
-      maxWidth: imageDim,
-      maxHeight: imageDim,
-      imageQuality: 60,
-    );
+      final image = await imagePicker.pickImage(
+        source: source,
+        preferredCameraDevice: p.CameraDevice.front,
+        maxWidth: imageDim,
+        maxHeight: imageDim,
+        imageQuality: 60,
+      );
 
-    if (image != null) {
-      setState(() => _pickedImg = File(image.path));
-      widget.pickImageCallback(_pickedImg!);
+      if (image != null) {
+        setState(() => _pickedImg = File(image.path));
+        widget.pickImageCallback(_pickedImg!);
+      }
+    } on PlatformException catch (e) {
+      SnackBars.showError(context: context, message: e.message);
+    } on Exception catch (e) {
+      print(e);
     }
   }
 
