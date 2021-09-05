@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path show extension;
 
 import '../helpers/snack_bars.dart';
-import '../widgets/auth/auth_form.dart' hide AuthMode;
+import '../widgets/auth/auth_form.dart' show AuthForm;
 
 class AuthPage extends StatelessWidget {
   Future<bool> _authenticate({

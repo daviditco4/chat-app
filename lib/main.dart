@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/auth_page.dart';
-import 'pages/chat_page.dart';
+import 'pages/chat_page.dart' show ChatPage;
 import 'pages/splash_page.dart';
 
 const CHAT_TOPIC = 'public';
