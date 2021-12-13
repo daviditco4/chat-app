@@ -90,7 +90,7 @@ class MessageBubble extends StatelessWidget {
                   text,
                   style: TextStyle(color: byMe ? sch.onPrimary : sch.onSurface),
                   softWrap: true,
-                  textWidthBasis: TextWidthBasis.parent,
+                  textWidthBasis: TextWidthBasis.longestLine,
                   textAlign: TextAlign.start,
                 ),
               ),
