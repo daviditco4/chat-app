@@ -51,9 +51,11 @@ Read this for downloading and installing the app from your mobile device.
 You'll need:
 
 ```
-- Android Jelly Bean or later (version 4.1, API level 16).
+- Android KitKat or later (version 4.4, API level 19).
+
 - Installation of apps from unknown sources permitted (see the "Setting up your device"
 section at https://www.cnet.com/tech/mobile/how-to-install-apps-outside-of-google-play/).
+
 - The application's binary file (download from the "Releases" section in this project's
 GitHub repository home page), then begin the installation by opening the file.
 ```
@@ -65,9 +67,9 @@ GitHub repository home page), then begin the installation by opening the file.
 3. Enter your photo, email, username and a new password.
 4. Tap "Sign Up".
 5. Scroll through the chat history to read messages from other people.
-6. For sending a new message, enter some text in the bottom field, then tap the "send" button.
+6. To send a new message, enter some text in the bottom field, then tap the "send" button.
 7. Once you finish using the app, open the pop-up menu at the upper-right corner of the screen and tap "Sign Out".
-8. For signing in again, enter your email and password, then tap "Sign In".
+8. To sign in again, enter your email and password, then tap "Sign In".
 
 Screenshots:
 
@@ -80,6 +82,7 @@ Screenshots:
   <img alt="App Screenshot 6" src="/dev_assets/images/app_screenshot_6.png" width="250" />
   <img alt="App Screenshot 7" src="/dev_assets/images/app_screenshot_7.png" width="250" />
   <img alt="App Screenshot 8" src="/dev_assets/images/app_screenshot_8.png" width="250" />
+  <img alt="App Screenshot 9" src="/dev_assets/images/app_screenshot_9.png" width="250" />
 </p>
 
 ## Built with
