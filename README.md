@@ -23,7 +23,7 @@ Links to the course:
 * Authenticating users with the FlutterFire SDK
   * Implementing user sign-up, sign-in & sign-out
   * Modifying the username & photo of a created user
-* Using the Firestore Database to manage chat messages sent by users
+* Using the Cloud Firestore database to manage chat messages sent by users
   * Listening to chat messages
   * Sending & ordering chat messages
 * Using Firebase's Cloud Storage to upload photos of users
